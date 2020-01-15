@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>TCC Lucas</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="socket.io/socket.io.js"></script>
+</head>
+<body>
+    
+    <canvas id="screen" width="600px" height="400px"></canvas>
+
+    <script type="module">
+        import createState from './index.js'
+
+        const data = createState()
+
+        const screen = document.getElementById('screen')
+        const context = screen.getContext('2d')
+        context.font = "30px Arial"
+
+        function renderScreen() {
+            context.clearRect(0, 0, 600, 400)
+            
+            context.fillText("Tombamentos:", 10, 40)
+            context.fillText(`${data.getState().tombamentos}`, 230, 40)
+
+            context.fillText("Colisões:", 10, 80)
+            context.fillText(`${data.getState().colisoes}`, 230, 80)
+
+            requestAnimationFrame(renderScreen)
+        }
+
+        renderScreen()
+
+        const socket = io()
+
+        socket.on('connect', () => {
+            console.log(`Client connected with id: ${socket.id}`)
+        })
+
+        socket.on('setup', (state) => {
+            console.log('Receiving "setup" event from server')
+            data.setState(state)
+        })
+
+        socket.on('update', (state) => {
+            console.log('Receiving "update" event from server', state)
+            data.setState(state)
+        })
+    </script>
+</body>
+</html>
