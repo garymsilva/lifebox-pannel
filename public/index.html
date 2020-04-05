@@ -10,30 +10,79 @@
 </head>
 <body>
     
-    <canvas id="screen" width="600px" height="400px"></canvas>
+    <div id="tombamentos">
+        <div class="label">Tombamentos</div>
+        <div id="vlr-tombamentos"></div>
+    </div>
 
+    <div id="colisoes">
+        <div class="label">Colisões</div>
+        <div id="vlr-colisoes"></div>
+    </div>
+
+    <div id="amplitude">
+        <div class="label">Amplitude</div>
+        <div id="vlr-amplitude"></div>
+    </div>
+
+    <div id="frequencia">
+        <div class="label">Frequência</div>
+        <div id="vlr-frequencia"></div>
+    </div>
+
+    <div id="map"></div>
+
+    <div id="history">
+    </div>
+
+    <!-- <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d14933.839884375559!2d-40.488660816979966!3d-20.650857510238108!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1spt-BR!2sbr!4v1585082549660!5m2!1spt-BR!2sbr" width="400" height="300" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe> -->
+    
+    <!-- <canvas id="screen" width="600px" height="400px"></canvas> -->
+
+    <script type="text/javascript" src="googlemaps.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIet2blAyLXgnz6pmYCWO5tOw-DI4Nx6M&callback=myMap" defer></script>
     <script type="module">
-        import createState from './index.js'
 
-        const data = createState()
+        let data = {}
 
-        const screen = document.getElementById('screen')
-        const context = screen.getContext('2d')
-        context.font = "30px Arial"
-
-        function renderScreen() {
-            context.clearRect(0, 0, 600, 400)
+        function renderMap() {
+            const coordinates = []
             
-            context.fillText("Tombamentos:", 10, 40)
-            context.fillText(`${data.getState().tombamentos}`, 230, 40)
+            data.historicoCoordenadas.map(
+                c => coordinates.push(new google.maps.LatLng(c.lat, c.lon))
+            );
 
-            context.fillText("Colisões:", 10, 80)
-            context.fillText(`${data.getState().colisoes}`, 230, 80)
+            if (coordinates.length > 0) {
+                const lastPosition = coordinates[coordinates.length-1]
+                map.setCenter(lastPosition)
+                
+                const marker = new google.maps.Marker({
+                    position: lastPosition,
+                    map: map
+                });
+            }
+            
+            const strokePath = new google.maps.Polyline({
+                path: coordinates,
+                geodesic: true,
+                strokeColor: 'blue',
+                strokeOpacity: 0.8,
+                strokeWeight: 2
+            });
 
-            requestAnimationFrame(renderScreen)
+            strokePath.setMap(map);
         }
 
-        renderScreen()
+        function renderScreen() {
+            // atualiza os mostradores
+            document.getElementById("vlr-tombamentos").innerHTML = data.tombamentos;
+            document.getElementById("vlr-colisoes").innerHTML = data.colisoes;
+            document.getElementById("vlr-amplitude").innerHTML = data.amplitude+" G";
+            document.getElementById("vlr-frequencia").innerHTML = data.frequencia+" Hz";
+
+            // atualiza o mapa
+            renderMap()
+        }
 
         const socket = io()
 
@@ -42,13 +91,17 @@
         })
 
         socket.on('setup', (state) => {
-            console.log('Receiving "setup" event from server')
-            data.setState(state)
+            console.log('Receiving "setup" event from server', state)
+            data = state
+            renderScreen()
+            console.log('New state', data)
         })
 
         socket.on('update', (state) => {
             console.log('Receiving "update" event from server', state)
-            data.setState(state)
+            data = state
+            renderScreen()
+            console.log('New state', data)
         })
     </script>
 </body>
