@@ -36,29 +36,29 @@ export default function createState() {
             historicoCoordenadas: [...state.historicoCoordenadas]
         }
 
-        if (newState.tombamentos) {
+        if (newState.tombamentos !== undefined) {
             tempState.tombamentos = newState.tombamentos
             tempState.historicoTombamentos.push({
                 datahora: Date.now()
             })
         }
         
-        if (newState.colisoes) {
+        if (newState.colisoes !== undefined) {
             tempState.colisoes = newState.colisoes
             tempState.historicoColisoes.push({
                 datahora: Date.now()
             })
         }
         
-        if (newState.frequencia) tempState.frequencia = newState.frequencia
-        if (newState.amplitude) tempState.amplitude = newState.amplitude
+        if (newState.frequencia !== undefined) tempState.frequencia = newState.frequencia
+        if (newState.amplitude !== undefined) tempState.amplitude = newState.amplitude
         
         if (newState.lat && newState.lon) tempState.historicoCoordenadas.push({
             lat: newState.lat,
             lon: newState.lon
         })
 
-        Object.assign(state, tempState)
+        state = tempState
         notifyAll(state)
     }
 
