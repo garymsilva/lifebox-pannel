@@ -9,7 +9,7 @@ const sockets = socketio(server)
 const state = createState()
 
 state.subscribe((newState) => {
-    console.log('> Sending new state', newState)
+    console.log('> Sending new state to clients', newState)
     sockets.emit('update', newState)
 })
 
@@ -23,6 +23,13 @@ app.post('/', (req, res) => {
     
     state.setState(req.body)
     res.sendStatus(200)
+})
+
+app.get('/reset', (req, res) => {
+    console.log('Reset data on state!')
+
+    state.resetState()
+    res.redirect('..')
 })
 
 sockets.on('connection', (socket) => {

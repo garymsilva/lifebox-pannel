@@ -1,19 +1,13 @@
 export default function createState() {
 
-    const state = {
+    let state = {
         tombamentos: 0,
         colisoes: 0,
         frequencia: 0.0,
         amplitude: 0.0,
-        historicoCoordenadas: [
-
-        ],
-        historicoTombamentos: [
-
-        ],
-        historicoColisoes: [
-
-        ]
+        historicoCoordenadas: [],
+        historicoTombamentos: [],
+        historicoColisoes: []
     }
 
     const observers = []
@@ -62,6 +56,19 @@ export default function createState() {
         notifyAll(state)
     }
 
+    function resetState() {
+        state = {
+            tombamentos: 0,
+            colisoes: 0,
+            frequencia: 0.0,
+            amplitude: 0.0,
+            historicoCoordenadas: [],
+            historicoTombamentos: [],
+            historicoColisoes: []
+        }
+        notifyAll(state)
+    }
+
     function getState() {
         return state
     }
@@ -69,7 +76,8 @@ export default function createState() {
     return {
         subscribe,
         setState,
-        getState
+        getState,
+        resetState
     }
 
 }
