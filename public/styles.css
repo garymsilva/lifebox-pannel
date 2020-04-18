@@ -1,8 +1,28 @@
-#map {
-    width:350px;
-    height:200px;
+.dashboard-label {
+    font-weight: 600;
 }
 
-#history h5 {
+.dashboard-value {
+    font-size: 1.35rem;
+}
+
+#second-section h5 {
     margin-top: 0;
+}
+
+#map {
+    width:100%;
+    max-width: 400px;
+    height: 40vh;
+    max-height: 250px;
+    margin: 0 auto;
+}
+
+
+/* overriding materialize-css framework */
+h6 {
+    font-size: 1.35rem;
+}
+.collection .collection-item.avatar {
+    min-height: unset;
 }
