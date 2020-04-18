@@ -23,36 +23,48 @@ export default function createState() {
     }
 
     function setState(newState) {
-        const tempState = {
-            ...state,
-            historicoColisoes: [...state.historicoColisoes],
-            historicoTombamentos: [...state.historicoTombamentos],
-            historicoCoordenadas: [...state.historicoCoordenadas]
-        }
 
-        if (newState.tombamentos !== undefined) {
-            tempState.tombamentos = newState.tombamentos
-            tempState.historicoTombamentos.push({
-                datahora: Date.now()
+        if (newState.tombamentos > state.tombamentos) {
+            state.tombamentos = newState.tombamentos
+            state.historicoTombamentos.push({
+                index: state.historicoTombamentos.length+1,
+                type: 'tombamento',
+                datetime: Date.now(),
+                coordinates: {
+                    lat: newState.lat,
+                    lon: newState.lon
+                }
             })
         }
         
-        if (newState.colisoes !== undefined) {
-            tempState.colisoes = newState.colisoes
-            tempState.historicoColisoes.push({
-                datahora: Date.now()
+        if (newState.colisoes > state.colisoes) {
+            state.colisoes = newState.colisoes
+            state.historicoColisoes.push({
+                index: state.historicoColisoes.length+1,
+                type: 'colisao',
+                datetime: Date.now(),
+                coordinates: {
+                    lat: newState.lat,
+                    lon: newState.lon
+                }
             })
         }
-        
-        if (newState.frequencia !== undefined) tempState.frequencia = newState.frequencia
-        if (newState.amplitude !== undefined) tempState.amplitude = newState.amplitude
-        
-        if (newState.lat && newState.lon) tempState.historicoCoordenadas.push({
-            lat: newState.lat,
-            lon: newState.lon
-        })
 
-        state = tempState
+        
+        if (newState.frequencia !== undefined) state.frequencia = newState.frequencia
+        if (newState.amplitude !== undefined) state.amplitude = newState.amplitude
+        
+        const lastCoord = state.historicoCoordenadas[state.historicoCoordenadas.length-1]
+        
+        if ((state.historicoCoordenadas.length == 0) || 
+            (lastCoord && (newState.lat !== lastCoord.lat || newState.lon !== lastCoord.lat))
+        ){            
+            state.historicoCoordenadas.push({
+                lat: newState.lat,
+                lon: newState.lon
+            })
+        }
+
         notifyAll(state)
     }
 
@@ -62,9 +74,9 @@ export default function createState() {
             colisoes: 0,
             frequencia: 0.0,
             amplitude: 0.0,
-            historicoCoordenadas: [],
             historicoTombamentos: [],
-            historicoColisoes: []
+            historicoColisoes: [],
+            historicoCoordenadas: []
         }
         notifyAll(state)
     }
