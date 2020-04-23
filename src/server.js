@@ -19,10 +19,21 @@ app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
 app.post('/', (req, res) => {
-    console.log(`> Receiving post with body`, req.body);
+    console.log(`> Receiving post with body`, req.body)
+
+    const data = req.body.data
+
+    const newState = {
+        tombamentos: data.evento.tomb,
+        colisoes: data.evento.colis,
+        frequencia: data.vibra.freq,
+        amplitude: data.vibra.ampli,
+        lat: data.localGPS.latit,
+        lon: data.localGPS.longit
+    }
     
-    state.setState(req.body)
-    res.sendStatus(200)
+    state.setState(newState)
+    res.sendStatus(201)
 })
 
 app.get('/reset', (req, res) => {

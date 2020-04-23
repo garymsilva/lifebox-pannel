@@ -57,7 +57,7 @@ export default function createState() {
         const lastCoord = state.historicoCoordenadas[state.historicoCoordenadas.length-1]
         
         if ((state.historicoCoordenadas.length == 0) || 
-            (lastCoord && (newState.lat !== lastCoord.lat || newState.lon !== lastCoord.lat))
+            (lastCoord && (newState.lat !== lastCoord.lat || newState.lon !== lastCoord.lon))
         ){            
             state.historicoCoordenadas.push({
                 lat: newState.lat,
